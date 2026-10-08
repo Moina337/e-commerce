@@ -3,6 +3,7 @@ package moinammaoueni.e_commerce.api.order;
 import jakarta.validation.Valid;
 import moinammaoueni.e_commerce.api.order.dto.OrderRequestDTO;
 import moinammaoueni.e_commerce.api.order.dto.OrderResponseDTO;
+import moinammaoueni.e_commerce.api.security.CurrentUser;
 import moinammaoueni.e_commerce.api.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,61 +24,39 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
 
     private final OrderService orderService;
+    private final CurrentUser currentUser;
 
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, CurrentUser currentUser) {
         this.orderService = orderService;
+        this.currentUser = currentUser;
     }
 
     @PostMapping
     public ResponseEntity<OrderResponseDTO> createOrder(@Valid @RequestBody OrderRequestDTO request) {
-        // TODO: Récupérer l'utilisateur authentifié depuis le contexte
-        User mockUser = new User();
-        mockUser.setId(1L);
-        mockUser.setEmail("user@example.com");
-        mockUser.setFirstName("Test");
-        mockUser.setLastName("User");
-
+        User connectedUser = currentUser.get();
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(orderService.createOrder(request, mockUser));
+                .body(orderService.createOrder(request, connectedUser));
     }
 
     @GetMapping
     public ResponseEntity<Page<OrderResponseDTO>> getMyOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        // TODO: Récupérer l'utilisateur authentifié depuis le contexte
-        User mockUser = new User();
-        mockUser.setId(1L);
-        mockUser.setEmail("user@example.com");
-        mockUser.setFirstName("Test");
-        mockUser.setLastName("User");
-
+        User connectedUser = currentUser.get();
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(orderService.getMyOrders(mockUser, pageable));
+        return ResponseEntity.ok(orderService.getMyOrders(connectedUser, pageable));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponseDTO> getMyOrder(@PathVariable Long id) {
-        // TODO: Récupérer l'utilisateur authentifié depuis le contexte
-        User mockUser = new User();
-        mockUser.setId(1L);
-        mockUser.setEmail("user@example.com");
-        mockUser.setFirstName("Test");
-        mockUser.setLastName("User");
-
-        return ResponseEntity.ok(orderService.getMyOrder(id, mockUser));
+        User connectedUser = currentUser.get();
+        return ResponseEntity.ok(orderService.getMyOrder(id, connectedUser));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> cancelMyOrder(@PathVariable Long id) {
-        // TODO: Récupérer l'utilisateur authentifié depuis le contexte
-        User mockUser = new User();
-        mockUser.setId(1L);
-        mockUser.setEmail("user@example.com");
-        mockUser.setFirstName("Test");
-        mockUser.setLastName("User");
-
-        orderService.cancelMyOrder(id, mockUser);
+        User connectedUser = currentUser.get();
+        orderService.cancelMyOrder(id, connectedUser);
         return ResponseEntity.noContent().build();
     }
 }

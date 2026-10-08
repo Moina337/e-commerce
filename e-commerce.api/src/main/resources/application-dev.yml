@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5433/ecommerce_db
     username: postgres
-    password: postgres
+    password: amir2026
 
   jpa:
     hibernate:

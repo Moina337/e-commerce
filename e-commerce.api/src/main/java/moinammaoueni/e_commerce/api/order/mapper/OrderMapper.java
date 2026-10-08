@@ -47,6 +47,6 @@ public interface OrderMapper {
             return null;
         }
 
-        return new UserSummaryDTO(user.getId(), user.getEmail(), user.getFirstName(), user.getLastName());
+        return new UserSummaryDTO(user.getId(), user.getEmail(), user.getName());
     }
 }
