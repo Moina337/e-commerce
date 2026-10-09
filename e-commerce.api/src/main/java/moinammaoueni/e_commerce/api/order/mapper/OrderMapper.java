@@ -7,6 +7,7 @@ import moinammaoueni.e_commerce.api.order.dto.OrderManagementResponseDTO;
 import moinammaoueni.e_commerce.api.order.dto.OrderResponseDTO;
 import moinammaoueni.e_commerce.api.order.dto.ProductSummaryDTO;
 import moinammaoueni.e_commerce.api.order.dto.UserSummaryDTO;
+import moinammaoueni.e_commerce.api.product.Product;
 import moinammaoueni.e_commerce.api.user.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -34,12 +35,16 @@ public interface OrderMapper {
         return dto;
     }
 
-    default ProductSummaryDTO toProductSummary(moinammaoueni.e_commerce.api.product.Product product) {
+    default ProductSummaryDTO toProductSummary(Product product) {
         if (product == null) {
             return null;
         }
 
-        return new ProductSummaryDTO(product.getId(), product.getName(), product.getSlug(), product.getImage());
+        String firstImageUrl = product.getImages() == null || product.getImages().isEmpty()
+                ? null
+                : "/api/images/" + product.getImages().getFirst().getId() + "/content";
+
+        return new ProductSummaryDTO(product.getId(), product.getName(), product.getSlug(), firstImageUrl);
     }
 
     default UserSummaryDTO toUserSummary(User user) {

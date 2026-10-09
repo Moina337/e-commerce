@@ -11,12 +11,22 @@ spring:
       hibernate:
         format_sql: true
 
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+
 server:
   port: 8080
 
 jwt:
   secret: "c2VjcmV0X2NodW0tc2VjdXJldHkta2V5LXRlc3Q="
   expiration: 86400000
+
+app:
+  storage:
+    location: ./uploads/images
+    max-file-size: 5MB
 
 springdoc:
   swagger-ui:

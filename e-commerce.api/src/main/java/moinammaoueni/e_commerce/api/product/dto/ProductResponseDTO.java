@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import moinammaoueni.e_commerce.api.image.dto.ImageResponseDTO;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,6 +20,6 @@ public class ProductResponseDTO {
     private String slug;
     private String description;
     private BigDecimal price;
-    private String image;
+    private List<ImageResponseDTO> images;
     private CategorySummaryDTO category;
 }

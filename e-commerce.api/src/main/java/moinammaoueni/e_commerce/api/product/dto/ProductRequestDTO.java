@@ -31,8 +31,6 @@ public class ProductRequestDTO {
     @NotNull(message = "La quantité en stock est obligatoire")
     private Integer stockQuantity;
 
-    private String image;
-
     @NotNull(message = "La catégorie est obligatoire")
     private Long categoryId;
 }

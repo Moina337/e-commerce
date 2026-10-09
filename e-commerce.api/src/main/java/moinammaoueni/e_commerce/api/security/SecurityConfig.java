@@ -62,13 +62,14 @@ public class SecurityConfig {
                     "/api/categories/**",
                     "/api/products/**",
                     "/api/products",
+                    "/api/images/**",
                     "/swagger-ui/**",
                     "/swagger-ui.html",
                     "/v3/api-docs/**"
                 ).permitAll()
                 .requestMatchers("/api/users/me").authenticated()
                 .requestMatchers("/api/orders/**").authenticated()
-                .requestMatchers("/api/admin/**").permitAll()
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
