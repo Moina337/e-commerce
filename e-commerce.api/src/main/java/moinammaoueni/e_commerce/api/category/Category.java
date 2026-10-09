@@ -11,7 +11,9 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.text.Normalizer;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 /**
  * Entité JPA représentant une catégorie de produits.
@@ -43,10 +45,26 @@ public class Category {
         LocalDateTime now = LocalDateTime.now();
         this.createdAt = now;
         this.updatedAt = now;
+        this.slug = generateSlug(this.name);
     }
 
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+        if (this.name != null && !this.name.isBlank()) {
+            this.slug = generateSlug(this.name);
+        }
+    }
+
+    private String generateSlug(String value) {
+        String safeValue = value == null ? "" : value.trim();
+        String normalized = Normalizer.normalize(safeValue, Normalizer.Form.NFD);
+        String slug = normalized.replaceAll("[^\\p{ASCII}]", "")
+                .toLowerCase(Locale.ROOT)
+                .replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("^-+|-$", "")
+                .trim();
+
+        return slug.isEmpty() ? "category" : slug;
     }
 }
