@@ -24,6 +24,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:                      # ← NOUVEAU, dans app
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 180s		
 
   # Votre Base de Données PostgreSQL
   db:
