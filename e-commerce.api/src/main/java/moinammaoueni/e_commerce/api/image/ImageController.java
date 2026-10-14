@@ -28,7 +28,8 @@ public class ImageController {
         this.imageService = imageService;
     }
 
-    @PostMapping("/admin/products/{productId}/images")
+    @PostMapping( value ="/admin/products/{productId}/images",
+    					consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ImageResponseDTO> uploadImage(@PathVariable Long productId,
                                                       @RequestParam("file") MultipartFile file) {

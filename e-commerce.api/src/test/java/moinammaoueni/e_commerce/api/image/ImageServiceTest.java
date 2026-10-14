@@ -19,6 +19,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -103,9 +104,41 @@ class ImageServiceTest {
 
     @Test
     void productHasImage_shouldDelegateToRepository() {
-        when(imageRepository.existsByProductId(4L)).thenReturn(true);
+        when(imageRepository.existsByProductIdAndDeletedFalse(4L)).thenReturn(true);
 
         assertTrue(imageService.productHasImage(4L));
-        verify(imageRepository).existsByProductId(4L);
+        verify(imageRepository).existsByProductIdAndDeletedFalse(4L);
+    }
+
+    @Test
+    void deleteImage_shouldSoftDeleteAndDeleteFile() throws IOException {
+        Image image = new Image();
+        image.setId(5L);
+        image.setStorageKey("key.jpg");
+
+        when(imageRepository.findById(5L)).thenReturn(Optional.of(image));
+        when(imageRepository.save(any(Image.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        doNothing().when(imageStorageService).delete("key.jpg");
+
+        imageService.deleteImage(5L);
+
+        verify(imageRepository).save(argThat(img -> img.isDeleted()));
+        verify(imageStorageService).delete("key.jpg");
+    }
+
+    @Test
+    void deleteImage_shouldSoftDeleteEvenIfFileDeletionFails() throws IOException {
+        Image image = new Image();
+        image.setId(6L);
+        image.setStorageKey("key2.jpg");
+
+        when(imageRepository.findById(6L)).thenReturn(Optional.of(image));
+        when(imageRepository.save(any(Image.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        doThrow(new IOException("cannot delete")).when(imageStorageService).delete("key2.jpg");
+
+        imageService.deleteImage(6L);
+
+        verify(imageRepository).save(argThat(img -> img.isDeleted()));
+        verify(imageStorageService).delete("key2.jpg");
     }
 }

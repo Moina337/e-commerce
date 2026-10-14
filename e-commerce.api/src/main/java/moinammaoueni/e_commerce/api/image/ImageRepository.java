@@ -10,5 +10,10 @@ public interface ImageRepository extends JpaRepository<Image, Long> {
 
     boolean existsByProductId(Long productId);
 
+    /**
+     * Checks if a non-deleted image exists for the given product.
+     */
+    boolean existsByProductIdAndDeletedFalse(Long productId);
+
     boolean existsById(Long id);
 }

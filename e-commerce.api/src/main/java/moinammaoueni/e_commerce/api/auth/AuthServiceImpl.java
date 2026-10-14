@@ -17,6 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -25,23 +28,16 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
 
-    public AuthServiceImpl(UserRepository userRepository,
-                          PasswordEncoder passwordEncoder,
-                          AuthenticationManager authenticationManager,
-                          JwtService jwtService) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
-    }
+ 
 
     @Override
     @Transactional
     public AuthResponseDTO register(RegisterRequestDTO request) {
-        if (userRepository.existsByEmail(request.getEmail().trim())) {
-            throw new DuplicateResourceException("Un compte existe déjà pour cet email");
-        }
-
+    	
+        if (userRepository.existsByEmail(request.getEmail())) {
+			throw new DuplicateResourceException("Un utilisateur avec cet email existe déjà");
+		}
+        
         User user = new User();
         user.setName(request.getName().trim());
         user.setEmail(request.getEmail().trim());
@@ -50,6 +46,7 @@ public class AuthServiceImpl implements AuthService {
         user.setEnabled(true);
 
         User savedUser = userRepository.save(user);
+        
         String token = jwtService.generateToken(savedUser.getEmail(), savedUser.getRole().name());
 
         AuthResponseDTO response = new AuthResponseDTO();
