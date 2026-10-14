@@ -1,0 +1,46 @@
+
+services:
+  # Votre application Java (Maven / Spring Boot)
+  app:
+    build: .
+    container_name: ecommerce_app
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    mem_limit: 768m
+    environment:
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75		
+      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      # On force l'URL Docker interne pour que l'app trouve la BDD, mais avec vos variables exactes
+      - POSTGRES_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION}
+      - APP_STORAGE_LOCATION=${APP_STORAGE_LOCATION}
+      - APP_STORAGE_MAX_FILE_SIZE=${APP_STORAGE_MAX_FILE_SIZE}
+      - APP_STORAGE_MAX_REQUEST_SIZE=${APP_STORAGE_MAX_REQUEST_SIZE}
+    volumes:
+      - img_data:/app/uploads/images # Chemin fixe dans le conteneur pour éviter les soucis de ./ relatifs
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Votre Base de Données PostgreSQL
+  db:
+    image: postgres:16
+    container_name: ${POSTGRES_DB}
+    environment:
+      POSTGRES_USER: ${POSTGRES_USERNAME}     # Utilise exactement votre POSTGRES_USERNAME
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} # Utilise exactement votre POSTGRES_PASSWORD
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USERNAME} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pg_data:  
+  img_data: 
