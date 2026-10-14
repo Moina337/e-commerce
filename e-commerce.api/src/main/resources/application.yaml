@@ -3,30 +3,26 @@ spring:
     name: ecommerce-api
 
   profiles:
-    active: dev
+    active: ${SPRING_PROFILES_ACTIVE:dev}
 
   jpa:
     open-in-view: false
-    properties:
-      hibernate:
-        format_sql: true
 
   servlet:
     multipart:
-      max-file-size: 5MB
-      max-request-size: 10MB
+      max-file-size: ${APP_STORAGE_MAX_FILE_SIZE:5MB}
+      max-request-size: ${APP_STORAGE_MAX_REQUEST_SIZE:10MB}
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 jwt:
-  secret: "c2VjcmV0X2NodW0tc2VjdXJldHkta2V5LXRlc3Q="
-  expiration: 86400000
+  expiration: ${JWT_EXPIRATION:86400000}
 
 app:
   storage:
-    location: ./uploads/images
-    max-file-size: 5MB
+    location: ${APP_STORAGE_LOCATION:./uploads/images}
+    max-file-size: ${APP_STORAGE_MAX_FILE_SIZE:5MB}
 
 springdoc:
   swagger-ui:

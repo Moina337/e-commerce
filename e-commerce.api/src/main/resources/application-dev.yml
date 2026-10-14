@@ -1,13 +1,19 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/ecommerce_db
-    username: postgres
-    password: amir2026
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/ecommerce_db}
+    username: ${POSTGRES_USERNAME:postgres}
+    password: ${POSTGRES_PASSWORD:amir2026}
 
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+jwt:
+  secret: ${JWT_SECRET:change-me-local-secret}
 
 logging:
   level:
