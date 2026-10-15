@@ -1,0 +1,49 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    mem_limit: 768m
+    ports:
+      - "${SERVER_PORT}:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75
+      - POSTGRES_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION}
+      - APP_STORAGE_LOCATION=/app/uploads/images
+      - APP_STORAGE_MAX_FILE_SIZE=${APP_STORAGE_MAX_FILE_SIZE}
+      - APP_STORAGE_MAX_REQUEST_SIZE=${APP_STORAGE_MAX_REQUEST_SIZE}
+    volumes:
+      - img_data:/app/uploads/images
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 180s
+
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    mem_limit: 512m
+    environment:
+      POSTGRES_USER: ${POSTGRES_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USERNAME} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pg_data:
+  img_data:
