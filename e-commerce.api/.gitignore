@@ -39,3 +39,5 @@ build/
 
 ### Uploaded files ###
 /uploads/
+
+*.sql
