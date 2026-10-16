@@ -1,6 +1,7 @@
 services:
   app:
     build: .
+    image: moinammaoueni/e-commerce-api:1.0
     restart: unless-stopped
     mem_limit: 768m
     ports:
