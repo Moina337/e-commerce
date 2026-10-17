@@ -2,7 +2,8 @@ name: Keep API Alive
 
 on:
   schedule:
-    - cron: '*/10 * * * *' # S'exécute automatiquement toutes les 10 minutes
+    - cron: '*/10 * * * *' # S'exécute toutes les 10 minutes
+  workflow_dispatch:      # Ngir nga mën ko tàkkal sa loxo saa su nekk
 
 jobs:
   ping:
@@ -10,4 +11,6 @@ jobs:
     steps:
       - name: Send Ping Request
         run: |
-          curl -I -s -o /dev/null -w "%{http_code}" https://ecommerce-api-1eu4.onrender.com
+          code=$(curl -s -o /dev/null -w "%{http_code}" https://ecommerce-api-1eu4.onrender.com/actuator/health)
+          echo "HTTP status: $code"
+          test "$code" = "200"
