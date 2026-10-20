@@ -24,7 +24,7 @@ app:
     location: ${APP_STORAGE_LOCATION:./uploads/images}
     max-file-size: ${APP_STORAGE_MAX_FILE_SIZE:5MB}
   cors:
-    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200	
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}	
 
 springdoc:
   swagger-ui:
