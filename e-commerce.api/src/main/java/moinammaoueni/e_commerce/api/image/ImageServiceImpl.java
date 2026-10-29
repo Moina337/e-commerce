@@ -80,21 +80,16 @@ public class ImageServiceImpl implements ImageService {
     @Override
     @Transactional
     public void deleteImage(Long imageId) {
+    	
         Image image = imageRepository.findById(imageId)
                 .orElseThrow(() -> new ResourceNotFoundException("Image introuvable avec l'id : " + imageId));
 
-        // Soft-delete: mark metadata as deleted so productHasImage() and other checks
-        // only consider non-deleted images. We still attempt to remove the physical
-        // file, but do not fail the operation if file deletion fails to avoid
-        // leaving the domain in an inconsistent state.
-        image.setDeleted(true);
-        imageRepository.save(image);
+           imageRepository.delete(image);
 
         try {
             imageStorageService.delete(image.getStorageKey());
         } catch (IOException e) {
-            // best-effort: physical file deletion failed, metadata is already marked deleted
-            // swallowing the exception intentionally; callers should rely on metadata state
+            
         }
     }
 
