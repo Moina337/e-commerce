@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public interface ImageStorageService {
 
-    String store(MultipartFile file, String storageKey) throws IOException;
+	StoredImage store(MultipartFile file, String storageKey) throws IOException;
 
     Resource load(String storageKey) throws IOException;
 

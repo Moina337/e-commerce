@@ -1,5 +1,6 @@
 package moinammaoueni.e_commerce.api.image;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Service
+@Profile("local-storage")
 public class LocalImageStorageService implements ImageStorageService {
 
     private final Path storageRoot;
@@ -26,7 +28,7 @@ public class LocalImageStorageService implements ImageStorageService {
     }
 
     @Override
-    public String store(MultipartFile file, String storageKey) throws IOException {
+    public StoredImage store(MultipartFile file, String storageKey) throws IOException {
         if (file == null || file.isEmpty()) {
             throw new IOException("Le fichier est vide");
         }
@@ -34,7 +36,10 @@ public class LocalImageStorageService implements ImageStorageService {
         String sanitizedKey = sanitizeStorageKey(storageKey);
         Path target = resolveStoragePath(sanitizedKey);
         Files.copy(file.getInputStream(), target);
-        return sanitizedKey;
+        return new StoredImage(
+                sanitizedKey,
+                null
+        );
     }
 
     @Override

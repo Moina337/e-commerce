@@ -37,6 +37,9 @@ public class Image {
 
     @Column(nullable = false)
     private Long size;
+    
+    @Column(name = "cloudinary_url", length = 1000)
+    private String cloudinaryUrl;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

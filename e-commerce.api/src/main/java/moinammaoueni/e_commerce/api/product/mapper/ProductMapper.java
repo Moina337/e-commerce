@@ -1,3 +1,4 @@
+
 package moinammaoueni.e_commerce.api.product.mapper;
 
 import moinammaoueni.e_commerce.api.category.Category;
@@ -8,6 +9,7 @@ import moinammaoueni.e_commerce.api.product.dto.CategorySummaryDTO;
 import moinammaoueni.e_commerce.api.product.dto.ProductManagementResponseDTO;
 import moinammaoueni.e_commerce.api.product.dto.ProductRequestDTO;
 import moinammaoueni.e_commerce.api.product.dto.ProductResponseDTO;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -37,7 +39,11 @@ public interface ProductMapper {
             return null;
         }
 
-        return new CategorySummaryDTO(category.getId(), category.getName(), category.getSlug());
+        return new CategorySummaryDTO(
+                category.getId(),
+                category.getName(),
+                category.getSlug()
+        );
     }
 
     default List<ImageResponseDTO> toImageDtos(List<Image> images) {
@@ -46,6 +52,7 @@ public interface ProductMapper {
         }
 
         return images.stream()
+                .filter(image -> !image.isDeleted())
                 .map(image -> {
                     ImageResponseDTO dto = new ImageResponseDTO();
                     dto.setId(image.getId());
@@ -53,7 +60,7 @@ public interface ProductMapper {
                     dto.setContentType(image.getContentType());
                     dto.setSize(image.getSize());
                     dto.setCreatedAt(image.getCreatedAt());
-                    dto.setUrl("/api/images/" + image.getId() + "/content");
+                    dto.setUrl(image.getCloudinaryUrl());
                     return dto;
                 })
                 .toList();

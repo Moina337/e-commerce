@@ -35,8 +35,11 @@ public class ImageServiceImpl implements ImageService {
         String storageKey = createStorageKey(validatedImage.extension());
         String originalFilename = file.getOriginalFilename() == null ? "upload" : file.getOriginalFilename();
 
+        StoredImage storedImage;
+
         try {
-            imageStorageService.store(file, storageKey);
+            storedImage = imageStorageService.store(file, storageKey);
+            storageKey = storedImage.publicId();
         } catch (IOException e) {
             throw new IllegalStateException("Erreur de stockage du fichier image", e);
         }
@@ -44,6 +47,7 @@ public class ImageServiceImpl implements ImageService {
         Image image = new Image();
         image.setOriginalFilename(originalFilename);
         image.setStorageKey(storageKey);
+        image.setCloudinaryUrl(storedImage.url());
         image.setContentType(validatedImage.contentType());
         image.setSize(file.getSize());
         image.setProduct(product);
@@ -86,11 +90,13 @@ public class ImageServiceImpl implements ImageService {
 
            imageRepository.delete(image);
 
-        try {
-            imageStorageService.delete(image.getStorageKey());
-        } catch (IOException e) {
-            
-        }
+           try {
+        	    imageStorageService.delete(image.getStorageKey());
+        	} catch (IOException e) {
+        	    throw new IllegalStateException(
+        	            "Erreur lors de la suppression de l'image sur Cloudinary", e
+        	    );
+        	}
     }
 
     @Override
