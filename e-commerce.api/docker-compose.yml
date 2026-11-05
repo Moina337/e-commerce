@@ -19,6 +19,10 @@ services:
       - APP_STORAGE_LOCATION=${APP_STORAGE_LOCATION}
       - APP_STORAGE_MAX_FILE_SIZE=${APP_STORAGE_MAX_FILE_SIZE}
       - APP_STORAGE_MAX_REQUEST_SIZE=${APP_STORAGE_MAX_REQUEST_SIZE}
+      - CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
+      - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
+      - CLOUDINARY_FOLDER=${CLOUDINARY_FOLDER}
     volumes:
       - img_data:/app/uploads/images # Chemin fixe dans le conteneur pour éviter les soucis de ./ relatifs
     depends_on:
